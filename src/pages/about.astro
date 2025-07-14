@@ -157,7 +157,7 @@ import Layout from '../layouts/Layout.astro';
         </div>
         
         <div class="projects-grid">
-          <div class="project-card highlight-project">
+          <div class="project-card">
             <h3>InsightFlow Analytics Platform</h3>
             <p>Comprehensive real-time user behavior analytics platform featuring multi-platform SDKs, microservices architecture, and high-performance streaming processing. Achieved 3000+ RPS with 70% performance improvement over traditional solutions.</p>
             <div class="project-tech">
@@ -575,23 +575,6 @@ import Layout from '../layouts/Layout.astro';
     transform: translateY(-8px);
     box-shadow: var(--shadow-lg);
     border-color: var(--color-accent);
-  }
-
-  .highlight-project {
-    border: 2px solid var(--color-accent);
-    background: linear-gradient(135deg, var(--color-background) 0%, var(--color-surface) 100%);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .highlight-project::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, var(--color-accent) 0%, #0056b3 100%);
   }
 
   .project-card h3 {
