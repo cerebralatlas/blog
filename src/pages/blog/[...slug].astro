@@ -1,0 +1,336 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+import TableOfContents from '../../components/TableOfContents.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: post,
+  }));
+}
+
+type Props = CollectionEntry<'blog'>;
+
+const post = Astro.props;
+const { Content, headings } = await post.render();
+---
+
+<Layout title={post.data.title} description={post.data.description}>
+  <article class="blog-post">
+    <div class="container">
+      <div class="post-layout">
+        <!-- Main content area -->
+        <div class="main-content">
+          <header class="post-header">
+            <div class="post-meta">
+              <time datetime={post.data.pubDate.toISOString()}>
+                {post.data.pubDate.toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </time>
+              {post.data.updatedDate && (
+                <span class="updated">
+                  Updated on {post.data.updatedDate.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
+                </span>
+              )}
+            </div>
+            
+            <h1 class="post-title">{post.data.title}</h1>
+            
+            <p class="post-description">{post.data.description}</p>
+            
+            {post.data.tags && post.data.tags.length > 0 && (
+              <div class="post-tags">
+                {post.data.tags.map((tag) => (
+                  <span class="tag">{tag}</span>
+                ))}
+              </div>
+            )}
+          </header>
+
+          <div class="prose">
+            <Content />
+          </div>
+
+          <footer class="post-footer">
+            <div class="post-navigation">
+              <a href="/blog" class="back-to-blog">
+                ← Back to Blog
+              </a>
+            </div>
+          </footer>
+        </div>
+
+        <!-- Sidebar table of contents -->
+        <aside class="sidebar">
+          <div class="toc-container">
+            <TableOfContents headings={headings} />
+          </div>
+        </aside>
+      </div>
+    </div>
+  </article>
+</Layout>
+
+<style>
+  .blog-post {
+    padding: var(--space-lg) 0;
+  }
+
+  .post-layout {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: var(--space-2xl);
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .main-content {
+    min-width: 0; /* Prevent content overflow */
+  }
+
+  .post-header {
+    margin-bottom: var(--space-2xl);
+    padding-bottom: var(--space-lg);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .post-meta {
+    display: flex;
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+  }
+
+  .post-meta time {
+    font-weight: 500;
+  }
+
+  .updated {
+    color: var(--color-accent);
+  }
+
+  .post-title {
+    margin-bottom: var(--space-md);
+    line-height: 1.2;
+  }
+
+  .post-description {
+    font-size: 1.25rem;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-lg);
+    line-height: 1.6;
+  }
+
+  .post-tags {
+    display: flex;
+    gap: var(--space-xs);
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    background-color: var(--color-surface);
+    color: var(--color-text-secondary);
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+
+  .prose {
+    max-width: none;
+    color: var(--color-text);
+    line-height: 1.8;
+  }
+
+  .prose :global(h1),
+  .prose :global(h2),
+  .prose :global(h3),
+  .prose :global(h4),
+  .prose :global(h5),
+  .prose :global(h6) {
+    margin-top: var(--space-xl);
+    margin-bottom: var(--space-md);
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .prose :global(h1) {
+    font-size: 2.5rem;
+    border-bottom: 2px solid var(--color-border);
+    padding-bottom: var(--space-sm);
+  }
+
+  .prose :global(h2) {
+    font-size: 2rem;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: var(--space-xs);
+  }
+
+  .prose :global(h3) {
+    font-size: 1.5rem;
+  }
+
+  .prose :global(h4) {
+    font-size: 1.25rem;
+  }
+
+  .prose :global(h5),
+  .prose :global(h6) {
+    font-size: 1rem;
+  }
+
+  .prose :global(p) {
+    margin-bottom: var(--space-md);
+  }
+
+  .prose :global(ul),
+  .prose :global(ol) {
+    margin-bottom: var(--space-md);
+    padding-left: var(--space-lg);
+  }
+
+  .prose :global(li) {
+    margin-bottom: var(--space-xs);
+  }
+
+  .prose :global(blockquote) {
+    margin: var(--space-lg) 0;
+    padding: var(--space-md) var(--space-lg);
+    background-color: var(--color-surface);
+    border-left: 4px solid var(--color-accent);
+    font-style: italic;
+  }
+
+  .prose :global(code) {
+    background-color: var(--color-surface);
+    color: var(--color-accent);
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+  }
+
+  .prose :global(pre) {
+    background-color: var(--color-primary);
+    color: #ffffff;
+    padding: var(--space-lg);
+    border-radius: var(--radius-md);
+    overflow-x: auto;
+    margin: var(--space-lg) 0;
+  }
+
+  .prose :global(pre code) {
+    background: none;
+    color: inherit;
+    padding: 0;
+  }
+
+  .prose :global(img) {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius-md);
+    margin: var(--space-lg) 0;
+  }
+
+  .prose :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: var(--space-lg) 0;
+  }
+
+  .prose :global(th),
+  .prose :global(td) {
+    padding: var(--space-sm);
+    border: 1px solid var(--color-border);
+    text-align: left;
+  }
+
+  .prose :global(th) {
+    background-color: var(--color-surface);
+    font-weight: 600;
+  }
+
+  .prose :global(a) {
+    color: var(--color-accent);
+    text-decoration: underline;
+  }
+
+  .prose :global(a:hover) {
+    opacity: 0.8;
+  }
+
+  .prose :global(.anchor-link) {
+    text-decoration: none;
+  }
+
+  .prose :global(.anchor-link:hover) {
+    opacity: 0.8;
+  }
+
+  .post-footer {
+    margin-top: var(--space-2xl);
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .back-to-blog {
+    color: var(--color-accent);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .back-to-blog:hover {
+    opacity: 0.8;
+  }
+
+  .sidebar {
+    position: sticky;
+    top: 72px; /* 52px nav height + 20px spacing */
+    height: fit-content;
+  }
+
+  .toc-container {
+    background-color: var(--color-surface);
+    border-radius: var(--radius-md);
+    padding: var(--space-lg);
+  }
+
+  @media (max-width: 768px) {
+    .post-layout {
+      grid-template-columns: 1fr;
+      gap: var(--space-lg);
+    }
+
+    .sidebar {
+      order: -1;
+      position: static;
+    }
+
+    .toc-container {
+      padding: var(--space-md);
+    }
+
+    .prose :global(h1) {
+      font-size: 2rem;
+    }
+
+    .prose :global(h2) {
+      font-size: 1.5rem;
+    }
+
+    .prose :global(pre) {
+      padding: var(--space-md);
+      font-size: 0.875rem;
+    }
+  }
+</style> 

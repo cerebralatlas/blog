@@ -1,52 +1,165 @@
-# Astro Starter Kit: Basics
+# Personal Blog
 
-```sh
-npm create astro@latest -- --template basics
+A modern personal blog built with Astro, featuring Apple-inspired clean design.
+
+## ✨ Features
+
+### Design Aspects
+
+- 🎨 **Clean & Beautiful**: Following Apple's design standards, minimalist yet elegant
+- 📱 **Responsive Design**: Perfect adaptation for desktop and mobile devices
+- 🎯 **User-Friendly**: Intuitive navigation and interaction experience
+
+### Technical Aspects
+
+- ⚡ **Astro-Powered**: Modern static site generator with lightning-fast loading
+- 📝 **Markdown Support**: Complete Markdown writing experience
+- 🔧 **TypeScript**: Type-safe development experience
+- 🎨 **CSS Variables**: Consistent design system
+- 📱 **PWA Ready**: Progressive Web App support
+
+### Functional Aspects
+
+- 🏠 **Homepage**: Personal introduction and latest post previews
+- 📚 **Post List**: Article index sorted by year and date
+- 📖 **Post Details**: Complete Markdown rendering and reading experience
+- 📑 **Table of Contents**: Interactive sidebar TOC with click-to-jump functionality
+- 🏷️ **Tag System**: Article categorization and tag display
+- 🔍 **SEO Optimized**: Complete metadata and structured data
+
+## 🚀 Quick Start
+
+### Install Dependencies
+
+```bash
+npm install
 ```
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/basics)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/basics)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/basics/devcontainer.json)
+### Start Development Server
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-![just-the-basics](https://github.com/withastro/astro/assets/2244813/a0a5533c-a856-4198-8470-2d67b1d7c554)
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
+```bash
+npm run dev
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+Visit `http://localhost:4321` to view the blog.
 
-## 🧞 Commands
+### Build Project
 
-All commands are run from the root of the project, from a terminal:
+```bash
+npm run build
+```
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+### Preview Build
 
-## 👀 Want to learn more?
+```bash
+npm run preview
+```
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+## 📝 Content Management
+
+### Adding New Posts
+
+1. Create a new `.md` file in the `src/content/blog/` directory
+2. Add frontmatter metadata:
+
+```yaml
+---
+title: "Post Title"
+description: "Post description"
+pubDate: 2024-01-20
+tags: ["Tag1", "Tag2"]
+draft: false  # Optional, defaults to false
+---
+
+# Post Content
+
+Your Markdown content here...
+```
+
+### File Structure
+
+```
+src/
+├── content/
+│   ├── config.ts          # Content collection configuration
+│   └── blog/              # Blog posts
+├── layouts/
+│   └── Layout.astro       # Base layout
+├── components/
+│   ├── Navigation.astro   # Navigation component
+│   └── TableOfContents.astro  # TOC component
+└── pages/
+    ├── index.astro        # Homepage
+    └── blog/
+        ├── index.astro    # Post list
+        └── [...slug].astro # Post detail page
+```
+
+## 🎨 Design System
+
+### Color Variables
+
+```css
+--color-primary: #1d1d1f;      /* Primary color */
+--color-secondary: #86868b;    /* Secondary color */
+--color-accent: #007aff;       /* Accent color */
+--color-background: #ffffff;   /* Background color */
+--color-surface: #f5f5f7;      /* Surface color */
+```
+
+### Spacing System
+
+```css
+--space-xs: 0.5rem;   /* 8px */
+--space-sm: 1rem;     /* 16px */
+--space-md: 1.5rem;   /* 24px */
+--space-lg: 2rem;     /* 32px */
+--space-xl: 3rem;     /* 48px */
+--space-2xl: 4rem;    /* 64px */
+```
+
+## 🔧 Customization
+
+### Modify Blog Information
+
+Edit `src/layouts/Layout.astro` and `src/components/Navigation.astro` to modify:
+
+- Blog title
+- Personal introduction
+- Navigation links
+- SEO information
+
+### Add New Pages
+
+1. Create a new `.astro` file in the `src/pages/` directory
+2. Wrap page content with Layout component
+3. Add links in the navigation component
+
+## 📱 Mobile Optimization
+
+- Responsive grid layout
+- Touch-friendly interactive elements
+- Optimized font sizes and spacing
+- Mobile-friendly TOC navigation
+
+## 🔍 SEO Features
+
+- Semantic HTML structure
+- Complete meta tags
+- Structured data markup
+- Auto-generated sitemap
+- Optimized image handling
+
+## 🛠️ Tech Stack
+
+- **Astro** - Static site generator
+- **TypeScript** - Type safety
+- **Markdown** - Content writing
+- **CSS3** - Styling and design
+- **Responsive Design** - Adaptive layout
+
+## 📖 Resources
+
+- [Astro Documentation](https://docs.astro.build)
+- [Markdown Syntax Guide](https://www.markdownguide.org)
+- [Design Inspiration](https://www.apple.com)

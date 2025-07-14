@@ -1,0 +1,430 @@
+---
+const currentPath = Astro.url.pathname;
+---
+
+<nav class="navigation">
+  <div class="nav-container">
+    <div class="nav-content">
+      <div class="nav-logo">
+        <a href="/" class="logo-link">
+          <svg class="logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="logo-text">Cerebral Atlas' Blog</span>
+        </a>
+      </div>
+      
+      <!-- Navigation links -->
+      <div class="nav-links">
+        <a href="/" class={`nav-link ${currentPath === '/' ? 'active' : ''}`}>
+          Home
+        </a>
+        <a href="/blog" class={`nav-link ${currentPath.startsWith('/blog') ? 'active' : ''}`}>
+          Blog
+        </a>
+        <a href="/about" class={`nav-link ${currentPath === '/about' ? 'active' : ''}`}>
+          About
+        </a>
+      </div>
+
+      <!-- Mobile menu button -->
+      <button class="mobile-menu-button" aria-label="Menu">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile menu -->
+  <div class="mobile-menu">
+    <div class="mobile-menu-content">
+      <a href="/" class={`mobile-nav-link ${currentPath === '/' ? 'active' : ''}`}>
+        Home
+      </a>
+      <a href="/blog" class={`mobile-nav-link ${currentPath.startsWith('/blog') ? 'active' : ''}`}>
+        Blog
+      </a>
+      <a href="/about" class={`mobile-nav-link ${currentPath === '/about' ? 'active' : ''}`}>
+        About
+      </a>
+    </div>
+  </div>
+</nav>
+
+<script>
+  // Mobile menu toggle
+  document.addEventListener('DOMContentLoaded', () => {
+    const menuButton = document.querySelector('.mobile-menu-button');
+    const mobileMenu = document.querySelector('.mobile-menu');
+    const navigation = document.querySelector('.navigation');
+    
+    if (menuButton && mobileMenu) {
+      menuButton.addEventListener('click', () => {
+        const isOpen = mobileMenu.classList.contains('open');
+        
+        if (isOpen) {
+          mobileMenu.classList.remove('open');
+          menuButton.classList.remove('active');
+          navigation?.classList.remove('menu-open');
+        } else {
+          mobileMenu.classList.add('open');
+          menuButton.classList.add('active');
+          navigation?.classList.add('menu-open');
+        }
+      });
+
+      // Close menu after clicking links
+      const mobileLinks = document.querySelectorAll('.mobile-nav-link');
+      mobileLinks.forEach(link => {
+        link.addEventListener('click', () => {
+          mobileMenu.classList.remove('open');
+          menuButton.classList.remove('active');
+          navigation?.classList.remove('menu-open');
+        });
+      });
+
+      // Close menu when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!navigation?.contains(e.target as Node)) {
+          mobileMenu.classList.remove('open');
+          menuButton.classList.remove('active');
+          navigation?.classList.remove('menu-open');
+        }
+      });
+    }
+  });
+</script>
+
+<style>
+  .navigation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    height: 52px;
+    background: rgba(251, 251, 253, 0.8);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 0.5px solid rgba(0, 0, 0, 0.18);
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    opacity: 0;
+    transform: translateY(-100%);
+    animation: slideDown 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  }
+
+  @keyframes slideDown {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .navigation.menu-open {
+    background: rgba(251, 251, 253, 0.95);
+  }
+
+  .nav-container {
+    max-width: 980px;
+    margin: 0 auto;
+    height: 100%;
+    padding: 0 22px;
+  }
+
+  .nav-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  /* Logo styles */
+  .nav-logo {
+    flex-shrink: 0;
+  }
+
+  .logo-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: #1d1d1f;
+    font-weight: 600;
+    font-size: 21px;
+    letter-spacing: -0.022em;
+    transition: opacity 0.3s ease;
+  }
+
+  .logo-link:hover {
+    opacity: 0.8;
+  }
+
+  .logo-icon {
+    width: 20px;
+    height: 20px;
+    color: #007aff;
+  }
+
+  .logo-text {
+    font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  /* Desktop navigation links */
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .nav-link {
+    color: #1d1d1f;
+    text-decoration: none;
+    font-size: 17px;
+    font-weight: 400;
+    letter-spacing: -0.022em;
+    padding: 0 16px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    border-radius: 6px;
+    min-width: 44px;
+    justify-content: center;
+  }
+
+  .nav-link:hover {
+    color: #007aff;
+    background-color: rgba(0, 122, 255, 0.12);
+    transform: scale(1.02);
+  }
+
+  .nav-link.active {
+    color: #007aff;
+    font-weight: 500;
+  }
+
+  .nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 5px;
+    height: 5px;
+    background-color: #007aff;
+    border-radius: 50%;
+  }
+
+  /* Mobile menu button */
+  .mobile-menu-button {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    position: relative;
+  }
+
+  .hamburger-line {
+    width: 18px;
+    height: 1px;
+    background-color: #1d1d1f;
+    margin: 2px auto;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transform-origin: center;
+  }
+
+  .mobile-menu-button.active .hamburger-line:nth-child(1) {
+    transform: rotate(45deg) translate(2.5px, 2.5px);
+  }
+
+  .mobile-menu-button.active .hamburger-line:nth-child(2) {
+    opacity: 0;
+  }
+
+  .mobile-menu-button.active .hamburger-line:nth-child(3) {
+    transform: rotate(-45deg) translate(2.5px, -2.5px);
+  }
+
+  /* Mobile menu */
+  .mobile-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: rgba(251, 251, 253, 0.95);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 0.5px solid rgba(0, 0, 0, 0.18);
+    transform: translateY(-100%);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    display: none;
+  }
+
+  .mobile-menu.open {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .mobile-menu-content {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 12px 22px 22px;
+  }
+
+  .mobile-nav-link {
+    display: block;
+    color: #1d1d1f;
+    text-decoration: none;
+    font-size: 17px;
+    font-weight: 400;
+    padding: 12px 0;
+    border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
+    transition: color 0.3s ease;
+  }
+
+  .mobile-nav-link:last-child {
+    border-bottom: none;
+  }
+
+  .mobile-nav-link:hover,
+  .mobile-nav-link.active {
+    color: #007aff;
+  }
+
+  /* Responsive design */
+     @media (max-width: 833px) {
+     .nav-links {
+       display: none;
+     }
+
+     .mobile-menu-button {
+       display: flex;
+     }
+
+     .mobile-menu {
+       display: block;
+     }
+
+     .nav-container {
+       padding: 0 16px;
+     }
+
+     .logo-link {
+       font-size: 19px;
+     }
+
+     .logo-icon {
+       width: 18px;
+       height: 18px;
+     }
+   }
+
+   @media (max-width: 1024px) and (min-width: 834px) {
+     .nav-link {
+       font-size: 15px;
+       padding: 0 12px;
+     }
+   }
+
+  @media (max-width: 480px) {
+    .nav-container {
+      padding: 0 12px;
+    }
+
+    .logo-link {
+      font-size: 17px;
+    }
+
+    .logo-icon {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  /* Dark mode adaptation */
+  @media (prefers-color-scheme: dark) {
+    .navigation {
+      background: rgba(29, 29, 31, 0.8);
+      border-bottom-color: rgba(255, 255, 255, 0.18);
+    }
+
+    .navigation.menu-open {
+      background: rgba(29, 29, 31, 0.95);
+    }
+
+    .logo-link,
+    .nav-link,
+    .mobile-nav-link {
+      color: #f5f5f7;
+    }
+
+         .nav-link:hover,
+     .nav-link.active,
+     .mobile-nav-link:hover,
+     .mobile-nav-link.active {
+       color: #007aff;
+     }
+
+     .nav-link:hover {
+       background-color: rgba(0, 122, 255, 0.15);
+     }
+
+    .hamburger-line {
+      background-color: #f5f5f7;
+    }
+
+    .mobile-menu {
+      background: rgba(29, 29, 31, 0.95);
+      border-bottom-color: rgba(255, 255, 255, 0.18);
+    }
+
+    .mobile-nav-link {
+      border-bottom-color: rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  /* Scroll style changes */
+  .navigation.scrolled {
+    background: rgba(251, 251, 253, 0.9);
+    box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .navigation.scrolled {
+      background: rgba(29, 29, 31, 0.9);
+      box-shadow: 0 1px 8px rgba(0, 0, 0, 0.3);
+    }
+  }
+</style>
+
+<script>
+  // Add scroll styles
+  document.addEventListener('DOMContentLoaded', () => {
+    const navigation = document.querySelector('.navigation');
+    
+    if (navigation) {
+      const handleScroll = () => {
+        if (window.scrollY > 20) {
+          navigation.classList.add('scrolled');
+        } else {
+          navigation.classList.remove('scrolled');
+        }
+      };
+
+      window.addEventListener('scroll', handleScroll);
+      handleScroll(); // Initialize
+    }
+  });
+</script> 

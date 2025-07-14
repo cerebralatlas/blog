@@ -1,11 +1,282 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+// Get the latest 3 posts
+const allPosts = await getCollection('blog');
+const latestPosts = allPosts
+  .sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime())
+  .slice(0, 3);
 ---
 
-<Layout>
-	<Welcome />
+<Layout title="My Blog - Home" description="Welcome to my personal blog, sharing technology and life insights">
+  <div class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <h1 class="hero-title">
+          Hi, I'm <span class="highlight">Cerebral Atlas</span>
+        </h1>
+        <p class="hero-description">
+          Welcome to my personal blog. I'm a full-stack developer who loves technology and sharing knowledge.
+          Here you'll find articles about full-stack development, design thinking, and life insights.
+        </p>
+        <div class="hero-actions">
+          <a href="/blog" class="cta-button primary">
+            Read Articles
+          </a>
+          <a href="#latest-posts" class="cta-button secondary">
+            Learn More
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section id="latest-posts" class="latest-posts">
+    <div class="container">
+      <div class="section-header">
+        <h2>Latest Posts</h2>
+        <p>Sharing my recent thoughts and discoveries</p>
+      </div>
+      
+      {latestPosts.length > 0 ? (
+        <div class="posts-grid">
+          {latestPosts.map((post) => (
+            <article class="post-card">
+              <div class="post-content">
+                <div class="post-meta">
+                  <time datetime={post.data.pubDate.toISOString()}>
+                    {post.data.pubDate.toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
+                  </time>
+                </div>
+                <h3 class="post-title">
+                  <a href={`/blog/${post.slug}`}>
+                    {post.data.title}
+                  </a>
+                </h3>
+                <p class="post-excerpt">
+                  {post.data.description}
+                </p>
+                <a href={`/blog/${post.slug}`} class="read-more">
+                  Read More →
+                </a>
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <div class="no-posts">
+          <p>No posts yet, stay tuned...</p>
+        </div>
+      )}
+      
+      {latestPosts.length > 0 && (
+        <div class="view-all">
+          <a href="/blog" class="view-all-link">
+            View All Posts →
+          </a>
+        </div>
+      )}
+    </div>
+  </section>
 </Layout>
+
+<style>
+  .hero {
+    background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-background) 100%);
+    padding: var(--space-2xl) 0;
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+  }
+
+  .hero-content {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .hero-title {
+    font-size: 4rem;
+    font-weight: 700;
+    margin-bottom: var(--space-md);
+    line-height: 1.1;
+  }
+
+  .highlight {
+    color: var(--color-accent);
+  }
+
+  .hero-description {
+    font-size: 1.25rem;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-xl);
+    line-height: 1.6;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: var(--space-md);
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .cta-button {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-sm) var(--space-lg);
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .cta-button.primary {
+    background-color: var(--color-accent);
+    color: white;
+  }
+
+  .cta-button.primary:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    opacity: 1;
+  }
+
+  .cta-button.secondary {
+    background-color: transparent;
+    color: var(--color-text);
+    border: 2px solid var(--color-border);
+  }
+
+  .cta-button.secondary:hover {
+    background-color: var(--color-surface);
+    border-color: var(--color-text-secondary);
+    opacity: 1;
+  }
+
+  .latest-posts {
+    padding: var(--space-2xl) 0;
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: var(--space-2xl);
+  }
+
+  .section-header h2 {
+    margin-bottom: var(--space-sm);
+  }
+
+  .section-header p {
+    color: var(--color-text-secondary);
+    font-size: 1.125rem;
+  }
+
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-xl);
+    margin-bottom: var(--space-xl);
+  }
+
+  .post-card {
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    transition: all 0.2s ease;
+  }
+
+  .post-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--color-accent);
+  }
+
+  .post-meta {
+    margin-bottom: var(--space-sm);
+  }
+
+  .post-meta time {
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .post-title {
+    margin-bottom: var(--space-sm);
+  }
+
+  .post-title a {
+    color: var(--color-text);
+    font-weight: 600;
+  }
+
+  .post-title a:hover {
+    color: var(--color-accent);
+  }
+
+  .post-excerpt {
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-md);
+    line-height: 1.6;
+  }
+
+  .read-more {
+    color: var(--color-accent);
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+
+  .no-posts {
+    text-align: center;
+    padding: var(--space-2xl);
+    color: var(--color-text-secondary);
+  }
+
+  .view-all {
+    text-align: center;
+  }
+
+  .view-all-link {
+    color: var(--color-accent);
+    font-weight: 600;
+    font-size: 1.125rem;
+  }
+
+  @media (max-width: 768px) {
+    .hero {
+      padding: var(--space-xl) 0;
+      min-height: 50vh;
+    }
+
+    .hero-title {
+      font-size: 2.5rem;
+    }
+
+    .hero-description {
+      font-size: 1.125rem;
+    }
+
+    .hero-actions {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .cta-button {
+      width: 100%;
+      max-width: 280px;
+      justify-content: center;
+    }
+
+    .posts-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-lg);
+    }
+  }
+</style>

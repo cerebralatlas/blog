@@ -1,0 +1,244 @@
+---
+interface Props {
+  headings: {
+    depth: number;
+    slug: string;
+    text: string;
+  }[];
+}
+
+const { headings } = Astro.props;
+
+// Filter h2 and h3 headings
+const filteredHeadings = headings.filter(heading => heading.depth <= 3 && heading.depth >= 2);
+---
+
+<nav class="table-of-contents" aria-label="Table of contents">
+  <h3 class="toc-title">Table of Contents</h3>
+  {filteredHeadings.length > 0 ? (
+    <ul class="toc-list">
+      {filteredHeadings.map((heading) => (
+        <li class={`toc-item toc-level-${heading.depth}`}>
+          <a href={`#${heading.slug}`} class="toc-link">
+            {heading.text}
+          </a>
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <p class="no-headings">No table of contents available for this article</p>
+  )}
+</nav>
+
+<script>
+  // Table of contents interactive functionality
+  class TableOfContents {
+    private tocLinks: NodeListOf<HTMLAnchorElement>;
+    private headings: NodeListOf<HTMLElement>;
+    private currentActiveLink: HTMLAnchorElement | null = null;
+
+    constructor() {
+      this.tocLinks = document.querySelectorAll('.toc-link');
+      this.headings = document.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]');
+      
+      this.init();
+    }
+
+    init() {
+      // Add click event listeners
+      this.tocLinks.forEach(link => {
+        link.addEventListener('click', this.handleLinkClick.bind(this));
+      });
+
+      // Add scroll event listener
+      window.addEventListener('scroll', this.throttle(this.handleScroll.bind(this), 100));
+      
+      // Set initial active link
+      this.handleScroll();
+    }
+
+    handleLinkClick(event: Event) {
+      event.preventDefault();
+      const link = event.target as HTMLAnchorElement;
+      const targetId = link.getAttribute('href')?.substring(1);
+      
+      if (targetId) {
+        const targetElement = document.getElementById(targetId);
+        if (targetElement) {
+          // Smooth scroll to target position
+          const offsetTop = targetElement.offsetTop - 72; // Consider fixed navigation height
+          window.scrollTo({
+            top: offsetTop,
+            behavior: 'smooth'
+          });
+          
+          // Update URL
+          history.pushState(null, '', `#${targetId}`);
+        }
+      }
+    }
+
+    handleScroll() {
+      const scrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+      
+      // If scrolled to bottom, activate last link
+      if (scrollY + windowHeight >= documentHeight - 10) {
+        const lastLink = this.tocLinks[this.tocLinks.length - 1];
+        this.setActiveLink(lastLink);
+        return;
+      }
+
+      // Find current heading in viewport
+      let currentHeading: HTMLElement | null = null;
+      
+      for (let i = this.headings.length - 1; i >= 0; i--) {
+        const heading = this.headings[i];
+        const headingTop = heading.offsetTop - 92; // Offset
+        
+        if (scrollY >= headingTop) {
+          currentHeading = heading;
+          break;
+        }
+      }
+
+      if (currentHeading) {
+        const targetId = currentHeading.getAttribute('id');
+        const correspondingLink = document.querySelector(`.toc-link[href="#${targetId}"]`) as HTMLAnchorElement;
+        
+        if (correspondingLink) {
+          this.setActiveLink(correspondingLink);
+        }
+      }
+    }
+
+    setActiveLink(link: HTMLAnchorElement) {
+      if (this.currentActiveLink === link) return;
+      
+      // Remove previous active state
+      if (this.currentActiveLink) {
+        this.currentActiveLink.classList.remove('active');
+      }
+      
+      // Set new active state
+      link.classList.add('active');
+      this.currentActiveLink = link;
+    }
+
+    throttle(func: Function, limit: number) {
+      let inThrottle: boolean;
+      return function(this: any) {
+        const args = arguments;
+        const context = this;
+        if (!inThrottle) {
+          func.apply(context, args);
+          inThrottle = true;
+          setTimeout(() => inThrottle = false, limit);
+        }
+      }
+    }
+  }
+
+  // Initialize table of contents functionality
+  document.addEventListener('DOMContentLoaded', () => {
+    new TableOfContents();
+  });
+</script>
+
+<style>
+  .table-of-contents {
+    position: relative;
+  }
+
+  .toc-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: var(--space-md);
+    color: var(--color-text);
+    border-bottom: 2px solid var(--color-accent);
+    padding-bottom: var(--space-xs);
+  }
+
+  .toc-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .toc-item {
+    margin-bottom: var(--space-xs);
+  }
+
+  .toc-level-2 {
+    margin-left: 0;
+  }
+
+  .toc-level-3 {
+    margin-left: var(--space-md);
+  }
+
+  .toc-level-4 {
+    margin-left: var(--space-lg);
+  }
+
+  .toc-link {
+    display: block;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+    line-height: 1.4;
+    transition: all 0.2s ease;
+    border-left: 2px solid transparent;
+  }
+
+  .toc-link:hover {
+    color: var(--color-text);
+    background-color: rgba(0, 122, 255, 0.1);
+    border-left-color: var(--color-accent);
+    opacity: 1;
+  }
+
+  .toc-link.active {
+    color: var(--color-accent);
+    background-color: rgba(0, 122, 255, 0.1);
+    border-left-color: var(--color-accent);
+    font-weight: 500;
+  }
+
+  .no-headings {
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+    font-style: italic;
+    margin: 0;
+  }
+
+  @media (max-width: 768px) {
+    .table-of-contents {
+      background-color: var(--color-background);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+    }
+
+    .toc-title {
+      font-size: 1rem;
+      margin-bottom: var(--space-sm);
+    }
+
+    .toc-link {
+      font-size: 0.8rem;
+      padding: var(--space-xs);
+    }
+
+    .toc-level-3 {
+      margin-left: var(--space-sm);
+    }
+
+    .toc-level-4 {
+      margin-left: var(--space-md);
+    }
+  }
+</style> 

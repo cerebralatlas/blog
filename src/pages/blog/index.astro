@@ -1,0 +1,279 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+// Get all blog posts and sort by date
+const allPosts = await getCollection('blog');
+const sortedPosts = allPosts
+  .filter(post => !post.data.draft)
+  .sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime());
+
+// Group posts by year
+const postsByYear = sortedPosts.reduce((acc, post) => {
+  const year = post.data.pubDate.getFullYear();
+  if (!acc[year]) {
+    acc[year] = [];
+  }
+  acc[year].push(post);
+  return acc;
+}, {} as Record<number, typeof sortedPosts>);
+
+const years = Object.keys(postsByYear)
+  .map(Number)
+  .sort((a, b) => b - a);
+---
+
+<Layout title="Blog Posts - My Blog" description="Browse all my blog posts, including tech insights, design thoughts and life reflections">
+  <div class="blog-page">
+    <div class="container">
+      <header class="page-header">
+        <h1>Blog Posts</h1>
+        <p class="page-description">
+          Recording my thoughts and discoveries, sharing valuable content
+        </p>
+        <div class="stats">
+          <span class="stat">
+            <strong>{sortedPosts.length}</strong> posts
+          </span>
+          <span class="stat">
+            <strong>{years.length}</strong> years
+          </span>
+        </div>
+      </header>
+
+      <div class="content">
+        {years.length > 0 ? (
+          <div class="posts-by-year">
+            {years.map(year => (
+              <section class="year-section">
+                <h2 class="year-title">{year}</h2>
+                <div class="posts-list">
+                  {postsByYear[year].map(post => (
+                    <article class="post-item">
+                      <div class="post-date">
+                        <time datetime={post.data.pubDate.toISOString()}>
+                          {post.data.pubDate.toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric'
+                          })}
+                        </time>
+                      </div>
+                      <div class="post-content">
+                        <h3 class="post-title">
+                          <a href={`/blog/${post.slug}`}>
+                            {post.data.title}
+                          </a>
+                        </h3>
+                        <p class="post-description">
+                          {post.data.description}
+                        </p>
+                        {post.data.tags && post.data.tags.length > 0 && (
+                          <div class="post-tags">
+                            {post.data.tags.map(tag => (
+                              <span class="tag">{tag}</span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </section>
+            ))}
+          </div>
+        ) : (
+          <div class="no-posts">
+            <h2>No Posts Yet</h2>
+            <p>Stay tuned for more exciting content...</p>
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .blog-page {
+    padding: var(--space-xl) 0;
+    min-height: calc(100vh - 52px);
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: var(--space-2xl);
+    padding: var(--space-xl) 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .page-header h1 {
+    margin-bottom: var(--space-sm);
+  }
+
+  .page-description {
+    font-size: 1.125rem;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-lg);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .stats {
+    display: flex;
+    gap: var(--space-lg);
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+  }
+
+  .stat strong {
+    color: var(--color-accent);
+    font-size: 1.125rem;
+  }
+
+  .content {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .year-section {
+    margin-bottom: var(--space-2xl);
+  }
+
+  .year-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: var(--space-lg);
+    padding: var(--space-sm) 0;
+    border-bottom: 2px solid var(--color-accent);
+    display: inline-block;
+  }
+
+  .posts-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  .post-item {
+    display: flex;
+    gap: var(--space-lg);
+    padding: var(--space-lg);
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    transition: all 0.2s ease;
+  }
+
+  .post-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-accent);
+  }
+
+  .post-date {
+    flex-shrink: 0;
+    width: 80px;
+    text-align: center;
+  }
+
+  .post-date time {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    background-color: var(--color-surface);
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-sm);
+  }
+
+  .post-content {
+    flex: 1;
+  }
+
+  .post-title {
+    margin-bottom: var(--space-xs);
+  }
+
+  .post-title a {
+    color: var(--color-text);
+    font-weight: 600;
+    font-size: 1.25rem;
+    text-decoration: none;
+  }
+
+  .post-title a:hover {
+    color: var(--color-accent);
+  }
+
+  .post-description {
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-sm);
+    line-height: 1.6;
+  }
+
+  .post-tags {
+    display: flex;
+    gap: var(--space-xs);
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    background-color: var(--color-surface);
+    color: var(--color-text-secondary);
+    padding: 2px var(--space-xs);
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+
+  .no-posts {
+    text-align: center;
+    padding: var(--space-2xl);
+    color: var(--color-text-secondary);
+  }
+
+  .no-posts h2 {
+    margin-bottom: var(--space-sm);
+    color: var(--color-text);
+  }
+
+  @media (max-width: 768px) {
+    .blog-page {
+      padding: var(--space-lg) 0;
+    }
+
+    .page-header {
+      padding: var(--space-lg) 0;
+      margin-bottom: var(--space-xl);
+    }
+
+    .stats {
+      gap: var(--space-md);
+    }
+
+    .post-item {
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+
+    .post-date {
+      width: auto;
+      text-align: left;
+    }
+
+    .post-date time {
+      display: inline-block;
+      width: auto;
+    }
+
+    .year-title {
+      font-size: 1.25rem;
+    }
+  }
+</style> 
