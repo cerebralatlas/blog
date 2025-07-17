@@ -25,8 +25,8 @@ export async function GET(context) {
     })),
     customData: `<language>en-us</language>
     <generator>Astro v5.11.1</generator>
-    <webMaster>hello@cerebralatlas.me (Cerebral Atlas)</webMaster>
-    <managingEditor>hello@cerebralatlas.me (Cerebral Atlas)</managingEditor>`,
+    <webMaster>cerebralatlas@gmail.com (Cerebral Atlas)</webMaster>
+    <managingEditor>cerebralatlas@gmail.com (Cerebral Atlas)</managingEditor>`,
     stylesheet: '/rss-styles.xsl',
   });
 }
