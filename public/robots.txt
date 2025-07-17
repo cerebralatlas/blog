@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://cerebralatlas.com/sitemap-index.xml
+
+# Block access to draft content
+Disallow: /*?draft=true
+
+# Allow crawling of all other content
+Allow: /blog/
+Allow: /about/
+Allow: /rss.xml
+
+# Set crawl delay for bots (optional)
+Crawl-delay: 1

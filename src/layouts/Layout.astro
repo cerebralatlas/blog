@@ -4,21 +4,114 @@ import Navigation from '../components/Navigation.astro';
 export interface Props {
   title: string;
   description?: string;
+  image?: string;
+  canonical?: string;
+  type?: string;
+  publishedTime?: string;
+  modifiedTime?: string;
+  tags?: string[];
 }
 
-const { title, description = "A clean and beautiful personal blog" } = Astro.props;
+const { 
+  title, 
+  description = "A clean and beautiful personal blog", 
+  image = "/og-image.jpg",
+  canonical,
+  type = "website",
+  publishedTime,
+  modifiedTime,
+  tags = []
+} = Astro.props;
+
+const siteUrl = "https://cerebralatlas.com";
+const canonicalUrl = canonical ? `${siteUrl}${canonical}` : `${siteUrl}${Astro.url.pathname}`;
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="generator" content={Astro.generator} />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    
+    <!-- Primary Meta Tags -->
     <title>{title}</title>
+    <meta name="title" content={title} />
+    <meta name="description" content={description} />
+    <meta name="keywords" content={tags.join(", ")} />
+    <meta name="author" content="Cerebral Atlas" />
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href={canonicalUrl} />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    
+    <!-- RSS Feed -->
     <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/rss.xml" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={`${siteUrl}${image}`} />
+    <meta property="og:site_name" content="Cerebral Atlas' Blog" />
+    {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+    {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+    {tags.length > 0 && tags.map(tag => <meta property="article:tag" content={tag} />)}
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={canonicalUrl} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={`${siteUrl}${image}`} />
+    <meta name="twitter:creator" content="@cerebralatlas" />
+    
+    <!-- Additional SEO -->
+    <meta name="robots" content="index,follow" />
+    <meta name="googlebot" content="index,follow" />
+    <meta name="bingbot" content="index,follow" />
+    
+    <!-- Preconnect to external domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- Performance -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="//fonts.gstatic.com" />
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": type === "article" ? "BlogPosting" : "WebSite",
+      "name": title,
+      "headline": title,
+      "description": description,
+      "url": canonicalUrl,
+      "image": `${siteUrl}${image}`,
+      "author": {
+        "@type": "Person",
+        "name": "Cerebral Atlas",
+        "url": siteUrl
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": "Cerebral Atlas",
+        "url": siteUrl
+      },
+      "datePublished": publishedTime,
+      "dateModified": modifiedTime,
+      "keywords": tags.join(", "),
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": canonicalUrl
+      }
+    })} />
+    
+    <meta name="generator" content={Astro.generator} />
     <script is:inline>
       // Theme initialization
       const savedTheme = localStorage.getItem('theme') || 'light';

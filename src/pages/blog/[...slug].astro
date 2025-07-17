@@ -17,7 +17,15 @@ const post = Astro.props;
 const { Content, headings } = await post.render();
 ---
 
-<Layout title={post.data.title} description={post.data.description}>
+<Layout 
+  title={post.data.title} 
+  description={post.data.description}
+  type="article"
+  publishedTime={post.data.pubDate.toISOString()}
+  modifiedTime={post.data.updatedDate?.toISOString()}
+  tags={post.data.tags}
+  canonical={`/blog/${post.slug}`}
+>
   <article class="blog-post">
     <div class="container">
       <div class="post-layout">
@@ -56,7 +64,7 @@ const { Content, headings } = await post.render();
             )}
           </header>
 
-          <div class="prose">
+          <div class="prose" itemprop="articleBody">
             <Content />
           </div>
 

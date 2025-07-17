@@ -23,7 +23,11 @@ const years = Object.keys(postsByYear)
   .sort((a, b) => b - a);
 ---
 
-<Layout title="Blog Posts - My Blog" description="Browse all my blog posts, including tech insights, design thoughts and life reflections">
+<Layout 
+  title="Blog Posts - Full-Stack Development & Tech Articles" 
+  description="Explore my complete collection of blog posts covering full-stack development, modern web technologies, JavaScript frameworks, and insights on technology. Stay updated with the latest trends and tutorials."
+  canonical="/blog"
+>
   <div class="blog-page">
     <div class="container">
       <header class="page-header">
@@ -59,8 +63,8 @@ const years = Object.keys(postsByYear)
                         </time>
                       </div>
                       <div class="post-content">
-                        <h3 class="post-title">
-                          <a href={`/blog/${post.slug}`}>
+                        <h3 class="post-title" itemprop="headline">
+                          <a href={`/blog/${post.slug}`} itemprop="url" aria-label={`Read ${post.data.title}`}>
                             {post.data.title}
                           </a>
                         </h3>
