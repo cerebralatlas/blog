@@ -35,7 +35,7 @@ But vibe coding _is_ for you. **It’s for the parent trying to organize a neigh
 
 Another perspective no one’s talking about? The creativity angle. Traditional coding can feel like following strict rules—like writing a formal essay. **Vibe coding is more like journaling: messy, personal, and flexible**.
 
-You can experiment, make mistakes, and pivot without feeling like you’re “doing it wrong.” That freedom might just be what gets more people interested in tech in the first place. Why? Because **it stops feeling like a skill for “geniuses” and starts feeling like a tool for \***anyone**\* with an idea**.
+You can experiment, make mistakes, and pivot without feeling like you’re “doing it wrong.” That freedom might just be what gets more people interested in tech in the first place. Why? Because **it stops feeling like a skill for “geniuses” and starts feeling like a tool for anyone with an idea**.
 
 ## Yes, There Are Downsides—But That’s Okay
 
